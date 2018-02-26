@@ -18,8 +18,8 @@ bool isAChar(char c)
 {
     if(c <= 'Z' && c >= 'A') return 1;
     if(c <= '9' && c >= '0') return 1;
-    if(c == '.' && c == '-') return 1;
-    return 0;
+    if(c == '.' || c == '-') return 1;
+    return c == '*';
 }
 
 bool readString(char *t)
@@ -29,6 +29,7 @@ bool readString(char *t)
     while(!isAChar(c)) c = getchar();
     while(isAChar(c)) t[len++] = c, c = getchar();
     t[len] = 0;
+    //printf("[%s]\n", t);
     return t[0] != '*';
 }
 
@@ -71,7 +72,7 @@ void bigDictTest()
     {
         cout << words[i]+" ";
         for(int j = 0; j < bigDict_len[i]; j++)
-            putchar('0'+bigDict[i][j]);
+            putchar(bigDict[i][j]?'-':'.');
         putchar('\n');
     }
 }
@@ -79,8 +80,11 @@ void bigDictTest()
 int main()
 {
     readDict();
+    printf("readDict()\n");
     readWords();
+    printf("readWords()\n");
     buildBigDict();
+    printf("readBigDict()\n");
     bigDictTest();
     //solve();
     return 0;
