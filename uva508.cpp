@@ -52,7 +52,8 @@ void readDict()
 void readWords()
 {
     while(cin>>words[num++])
-        if(words[num-1][0] == '*') return;
+        if(words[num-1][0] == '*') break;
+    num--;
 }
 
 void buildBigDict()
@@ -118,7 +119,7 @@ void solve()
                 status = cmpRes, pos = i;
             }
         }
-        if(PRINT) print(pos, status?'?':'\0');
+        if(PRINT && status != UNCMPED) print(pos, status?'?':'\0');
     }
 }
 
@@ -134,3 +135,17 @@ int main()
     solve();
     return 0;
 }
+
+/*
+PS F:\ACM> ./tmp > tmp.out
+A --
+B ..
+C -.
+*
+ABC
+*
+--
+*
+PS F:\ACM> cat .\tmp.out
+*?
+*/
