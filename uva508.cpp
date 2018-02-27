@@ -4,13 +4,16 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <cmath>
 #include <bitset>
 using namespace std;
+const int CMPFAILED = 9130122;
+const int UNCMPED = 913122;
 
-int num, bigDict_len[105];
+int num, aWord_len, bigDict_len[105];
 char s[105];
 string words[105];
-bitset <105> bigDict[105];
+bitset <105> aWord, bigDict[105];
 map < char, bitset<6> > dict;
 map < char, int > dict_len;
 
@@ -42,7 +45,7 @@ void readDict()
         int len = strlen(s);
         dict_len[c] = len;
         for(int i = 0; i < len; i++)
-            dict[c][i] = (s[i]=='.')?0:1;
+            dict[c][i] = (s[i]=='-');
     }
 }
 
@@ -54,7 +57,7 @@ void readWords()
 
 void buildBigDict()
 {
-    sort(words, words+num);
+    //sort(words, words+num);
     for(int i = 0; i < num; i++)
     {
         for(int j = 0; j < words[i].size(); j++)
@@ -77,15 +80,57 @@ void bigDictTest()
     }
 }
 
+int cmp(int x)
+{
+    int cmpLen = min(aWord_len, bigDict_len[x]);
+    for(int i = 0; i < cmpLen; i++)
+        if(aWord[i] != bigDict[x][i]) return CMPFAILED;
+    return abs(aWord_len-bigDict_len[x]);
+}
+
+void print(int pos, char c)
+{
+    cout << words[pos] << c << endl;
+}
+
+void solve()
+{
+    while(readString(s))
+    {
+        aWord_len = strlen(s);
+        for(int i = 0; i < aWord_len; i++)
+            aWord[i] = (s[i]=='-');
+        
+        int status = UNCMPED, pos = -1, PRINT = 1;
+        for(int i = 0; i < num; i++)
+        {
+            int cmpRes = cmp(i);
+            if(cmpRes == CMPFAILED) continue;
+            if(!cmpRes) {
+                if(!status) {
+                    print(pos, '!');
+                    PRINT = 0;
+                    break;
+                } else {
+                    status = cmpRes, pos = i;
+                }
+            } else if(cmpRes < status) {
+                status = cmpRes, pos = i;
+            }
+        }
+        if(PRINT) print(pos, status?'?':'\0');
+    }
+}
+
 int main()
 {
     readDict();
-    printf("readDict()\n");
+    //printf("readDict()\n");
     readWords();
-    printf("readWords()\n");
+    //printf("readWords()\n");
     buildBigDict();
-    printf("readBigDict()\n");
-    bigDictTest();
-    //solve();
+    //printf("readBigDict()\n");
+    //bigDictTest();
+    solve();
     return 0;
 }
