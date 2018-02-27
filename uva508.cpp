@@ -1,151 +1,70 @@
-#include <cstdio>
-#include <string>
-#include <cstring>
 #include <iostream>
 #include <algorithm>
 #include <map>
-#include <cmath>
-#include <bitset>
+#include <string>
 using namespace std;
-const int CMPFAILED = 9130122;
-const int UNCMPED = 913122;
 
-int num, aWord_len, bigDict_len[105];
-char s[105];
-string words[105];
-bitset <105> aWord, bigDict[105];
-map < char, bitset<6> > dict;
-map < char, int > dict_len;
-
-bool isAChar(char c)
-{
-    if(c <= 'Z' && c >= 'A') return 1;
-    if(c <= '9' && c >= '0') return 1;
-    if(c == '.' || c == '-') return 1;
-    return c == '*';
-}
-
-bool readString(char *t)
-{
-    int len = 0;
-    char c = getchar();
-    while(!isAChar(c)) c = getchar();
-    while(isAChar(c)) t[len++] = c, c = getchar();
-    t[len] = 0;
-    //printf("[%s]\n", t);
-    return t[0] != '*';
-}
+int num;
+string words[105], bigDict[105];
+map <char, string> dict;
 
 void readDict()
 {
-    while(readString(s))
-    {
-        char c = s[0];
-        readString(s);
-        int len = strlen(s);
-        dict_len[c] = len;
-        for(int i = 0; i < len; i++)
-            dict[c][i] = (s[i]=='-');
+    string key, value;
+    cin >> key;
+    while(key[0] != '*') {
+        cin >> value;
+        dict[key[0]] = value;
+        cin >> key;
     }
-}
-
-void readWords()
-{
-    while(cin>>words[num++])
-        if(words[num-1][0] == '*') break;
-    num--;
 }
 
 void buildBigDict()
 {
-    //sort(words, words+num);
-    for(int i = 0; i < num; i++)
+    while(cin >> words[num++])
     {
-        for(int j = 0; j < words[i].size(); j++)
-        {
-            char c = words[i][j];
-            for(int k = 0; k < dict_len[c]; k++)
-                bigDict[i][bigDict_len[i]++] = dict[c][k];
-        }
+        if(words[num-1][0] == '*') break;
+        for(int i = 0; i < words[num-1].size(); i++)
+            bigDict[num-1] += dict[words[num-1][i]];
     }
+    num--;
 }
 
-void bigDictTest()
+int cmp(string s, string t)
 {
-    for(int i = 0; i < num; i++)
-    {
-        cout << words[i]+" ";
-        for(int j = 0; j < bigDict_len[i]; j++)
-            putchar(bigDict[i][j]?'-':'.');
-        putchar('\n');
-    }
-}
-
-int cmp(int x)
-{
-    int cmpLen = min(aWord_len, bigDict_len[x]);
-    for(int i = 0; i < cmpLen; i++)
-        if(aWord[i] != bigDict[x][i]) return CMPFAILED;
-    return abs(aWord_len-bigDict_len[x]);
-}
-
-void print(int pos, char c)
-{
-    cout << words[pos] << c << endl;
+    if(s.size() < t.size()) swap(s, t);
+    if(s.substr(0, t.size()) == t) 
+        return s.size()-t.size();
+    else
+        return -1;
 }
 
 void solve()
 {
-    while(readString(s))
+    string codes;
+    while(cin >> codes)
     {
-        aWord_len = strlen(s);
-        for(int i = 0; i < aWord_len; i++)
-            aWord[i] = (s[i]=='-');
-        
-        int status = UNCMPED, pos = -1, PRINT = 1;
+        if(codes[0] == '*') return;
+        int pos = -1, status = 1<<25, PRINT = 1;
         for(int i = 0; i < num; i++)
         {
-            int cmpRes = cmp(i);
-            if(cmpRes == CMPFAILED) continue;
-            if(!cmpRes) {
-                if(!status) {
-                    print(pos, '!');
-                    PRINT = 0;
-                    break;
-                } else {
-                    status = cmpRes, pos = i;
-                }
-            } else if(cmpRes < status) {
-                status = cmpRes, pos = i;
+            int t = cmp(codes, bigDict[i]);
+            if(t < 0) continue;
+            if(!(t+status)) {
+                cout << words[pos]+"!" << endl;
+                PRINT = 0;
+                break;
             }
+            if(t < status) status = t, pos = i;
         }
-        if(PRINT && status != UNCMPED) print(pos, status?'?':'\0');
+        if(PRINT && pos >= 0) cout << words[pos]+(status?"?":"") << endl;
     }
 }
 
 int main()
 {
     readDict();
-    //printf("readDict()\n");
-    readWords();
-    //printf("readWords()\n");
     buildBigDict();
-    //printf("readBigDict()\n");
-    //bigDictTest();
     solve();
     return 0;
 }
-
-/*
-PS F:\ACM> ./tmp > tmp.out
-A --
-B ..
-C -.
-*
-ABC
-*
---
-*
-PS F:\ACM> cat .\tmp.out
-*?
-*/
