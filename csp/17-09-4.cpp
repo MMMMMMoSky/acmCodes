@@ -12,7 +12,7 @@ stack <int> S;
 
 struct AdjacencyList {
     int h[1005], nx[10005], to[10005];
-    int now, cnt;
+    int cnt;
 
     AdjacencyList() {
         memset(h, 0, sizeof h);
@@ -20,11 +20,11 @@ struct AdjacencyList {
         memset(to, 0, sizeof to);
         cnt = 0;
     }
-    int first(int node) {
+    int first(int node, int &now) {
         now = h[node];
         return to[now];
     }
-    int nxt() {
+    int nxt(int &now) {
         now = nx[now];
         return to[now];
     }
@@ -51,12 +51,10 @@ void tarjan(int u)
     dfn[u] = low[u] = ++cnt;
     S.push(u);
     instack[u] = 1;
-    for(int v = G.first(u); v; v = G.nxt())
+    int v, now;
+    for(v = G.first(u, now); v; v = G.nxt(now))
     {
-        if(!dfn[v]) {
-            printf("%d --> %d\n", u, v);
-            tarjan(v);
-        }
+        if(!dfn[v]) tarjan(v);
         if(instack[v]) low[u] = min(low[u], low[v]);
     }
     if(dfn[u] == low[u]) {
@@ -76,13 +74,11 @@ void buildT(int u)
 {
     int bu = belong[u], bv;
     instack[u] = 1;
-    for(int v = G.first(u); v; v = G.nxt())
+    int v, now;
+    for(v = G.first(u, now); v; v = G.nxt(now))
     {
         bv = belong[v]; 
-        if(!instack[v]) {
-            printf("%d --> %d\n", u, v);
-            buildT(v);
-        }
+        if(!instack[v]) buildT(v);
         if(bu != bv && !added[bu][bv]) {
             T.addedge(bu, bv);
             added[bu][bv] = 1;
@@ -102,19 +98,13 @@ void tarjanBuild()
 
 void dfs(int u)
 {
-    for(int v = T.first(u); v; v = T.nxt())
+    int v, now;
+    for(v = T.first(u, now); v; v = T.nxt(now))
     {
         pre[v] += pre[u] + 1;
         dfs(v);
         sub[u] += sub[v] + 1; 
     }
-}
-
-void print(int x)
-{
-    for(int i = 1; i <= n; i++)
-        if(belong[i] == x) printf("%d ", i);
-    putchar('\n');
 }
 
 void solve()
@@ -123,10 +113,7 @@ void solve()
     for(int i = 1; i <= N; i++)
         if(!hasWayIn[i]) dfs(i);
     for(int i = 1; i <= N; i++) 
-        if(sub[i]+pre[i] == N-1) {
-            ans += size[i];
-            //print(i);
-        }
+        if(sub[i]+pre[i] == N-1) ans += size[i];
     printf("%d\n", ans);
 }
 
