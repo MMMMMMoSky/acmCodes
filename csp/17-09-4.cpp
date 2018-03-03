@@ -7,7 +7,7 @@ using namespace std;
 int n, m, N, cnt; // cnt [maybe bug]
 int pre[1005], sub[1005];
 int size[1005], belong[1005], dfn[1005], low[1005]; 
-bool instack[1005], hasWayIn[1005], added[1005][1005];
+bool instack[1005], floyd[1005][1005];
 stack <int> S;
 
 struct AdjacencyList {
@@ -33,7 +33,7 @@ struct AdjacencyList {
         nx[cnt] = h[u];
         h[u] = cnt;
     }
-}G, T;
+}G;
 
 void readInData()
 {
@@ -59,7 +59,6 @@ void tarjan(int u)
     }
     if(dfn[u] == low[u]) {
         N++;
-        pre[N] = sub[N] = 1;
         int t;
         do {
             t = S.top();
@@ -80,11 +79,7 @@ void buildT(int u)
     {
         bv = belong[v]; 
         if(!instack[v]) buildT(v);
-        if(bu != bv && !added[bu][bv]) {
-            T.addedge(bu, bv);
-            added[bu][bv] = 1;
-            hasWayIn[bv] = 1;
-        }     
+        if(bu != bv) floyd[bu][bv] = 1;
     }
 }
 
@@ -97,24 +92,19 @@ void tarjanBuild()
         if(!instack[i]) buildT(i);    
 }
 
-void dfs(int u)
-{
-    int v, now;
-    for(v = T.first(u, now); v; v = T.nxt(now))
-    {
-        pre[v] += pre[u];
-        dfs(v);
-        sub[u] += sub[v]; 
-    }
-}
-
 void solve()
 {
     int ans = 0;
+    for(int k = 1; k <= N; k++)
     for(int i = 1; i <= N; i++)
-        if(!hasWayIn[i]) dfs(i);
+    for(int j = 1; j <= N; j++)
+        floyd[i][j] = floyd[i][j] || (floyd[i][k] && floyd[k][j]);
+    for(int i = 1; i <= N; i++)
+    for(int j = 1; j <= N; j++)
+        sub[i] += floyd[i][j],
+        pre[i] += floyd[j][i];
     for(int i = 1; i <= N; i++) 
-        if(sub[i]+pre[i] == N) ans += size[i];
+        if(sub[i]+pre[i] == N-1) ans += size[i];
     printf("%d\n", ans);
 }
 
