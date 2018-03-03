@@ -66,7 +66,7 @@ void tarjan(int u)
             S.pop();
             instack[t] = 0;
             belong[t] = N;
-            size[t]++;
+            size[N]++;
         }while(t != u);
     }
 }
