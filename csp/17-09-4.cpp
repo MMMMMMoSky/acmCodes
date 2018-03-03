@@ -59,6 +59,7 @@ void tarjan(int u)
     }
     if(dfn[u] == low[u]) {
         N++;
+        pre[N] = sub[N] = 1;
         int t;
         do {
             t = S.top();
@@ -101,9 +102,9 @@ void dfs(int u)
     int v, now;
     for(v = T.first(u, now); v; v = T.nxt(now))
     {
-        pre[v] += pre[u] + 1;
+        pre[v] += pre[u];
         dfs(v);
-        sub[u] += sub[v] + 1; 
+        sub[u] += sub[v]; 
     }
 }
 
@@ -113,7 +114,7 @@ void solve()
     for(int i = 1; i <= N; i++)
         if(!hasWayIn[i]) dfs(i);
     for(int i = 1; i <= N; i++) 
-        if(sub[i]+pre[i] == N-1) ans += size[i];
+        if(sub[i]+pre[i] == N) ans += size[i];
     printf("%d\n", ans);
 }
 
