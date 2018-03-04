@@ -5,8 +5,8 @@
 #include <ctime>
 using namespace std;
 
-const int N = 20;
-const int M = 200;
+const int N = 1000;
+const int M = 10000;
 
 int main()
 {
@@ -26,7 +26,8 @@ int main()
         printf("%d %d %d ", t, a, b);
         if(t == 1) {
             int x = (rand()%M)+1;
-            printf("%d\n", x);
+            printf("%d", x);
         }
+        putchar('\n');
     } 
 }
