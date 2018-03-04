@@ -6,7 +6,7 @@
 using namespace std;
 
 const int N = 1000;
-const int M = 10000;
+const int M = 1000;
 
 int main()
 {
