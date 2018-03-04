@@ -14,6 +14,9 @@ int main()
     int n = (rand()%N)+1;
     int m = (rand()%N)+1;
     printf("%d %d\n", n, m);
+    for(int i = 1; i <= n; i++)
+        printf("%d ", (rand()%M)+1);
+    putchar('\n');
     for(int i = 1; i <= m; i++)
     {
         int t = (rand()&1)+1;
