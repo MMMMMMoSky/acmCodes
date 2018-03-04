@@ -75,6 +75,10 @@ struct SegmentTree {
 
     void mark(int p, int l, int r, int a, int b, int x)
     {
+        if(l == r) {
+            tag[p].push(x);
+            return;
+        }
         S[p] = INVALID;
         int lc = p << 1, rc = lc | 1, mid = (l+r) >> 1;
         if(a <= l && r <= b) {
