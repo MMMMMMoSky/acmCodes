@@ -33,17 +33,6 @@ struct SegmentTree {
         }
         return S[p];
     }
-    /*
-    (gdb) n
-    32                  if(!S[p]%t) S[p] /= t;
-    (gdb) p S[p]%t
-    $10 = 0
-    (gdb) p !S[p]%t
-    $11 = 0
-    (gdb) p !(S[p]%t)
-    $12 = true
-    (gdb)
-    */
 
     void pushdown(int p)
     {
