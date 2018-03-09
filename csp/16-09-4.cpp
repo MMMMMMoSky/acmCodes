@@ -4,9 +4,9 @@
 #include <cstring>
 using namespace std;
 
-int n, m, fa[10005], d[10005];
+int n, m, cost[10005], d[10005];
 int h[10005], nx[200005], to[200005], len[200005];
-bool inq[10005], used[200005];
+bool inq[10005];
 queue <int> Q;
 
 void readInData()
@@ -40,13 +40,13 @@ void spfa()
             v = to[i], l = len[i];
             if(d[v] > d[u] + l) {
                 d[v] = d[u] + l;
-                fa[v] = i;
+                cost[v] = l;
                 if(!inq[v]) {
                     Q.push(v);
                     inq[v] = 1;
                 }
             } else if(d[v] == d[u] + l) {
-                if(l < len[fa[v]]) fa[v] = i;
+                cost[v] = min(cost[v], l);
             }
         }  
     }
@@ -56,11 +56,7 @@ void workout()
 {
     int ans = 0;
     for(int i = 2; i <= n; i++)
-    if(!used[fa[i]]) {
-        ans += len[fa[i]];
-        used[fa[i]|1] = 1;
-        used[fa[i]-(fa[i]&1)] = 1;
-    }
+        ans += cost[i];
     printf("%d\n", ans);
 }
 
