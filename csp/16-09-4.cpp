@@ -45,6 +45,8 @@ void spfa()
                     Q.push(v);
                     inq[v] = 1;
                 }
+            } else if(d[v] == d[u] + l) {
+                if(l < len[fa[v]]) fa[v] = i;
             }
         }  
     }
