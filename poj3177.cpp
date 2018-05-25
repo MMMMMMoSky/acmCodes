@@ -36,6 +36,7 @@ void tarjan(int u, int fa)
         int v = to[i];
         if(!visited[v]) {
             tarjan(v, u);
+            low[u] = min(low[u], low[v]);
             if(dfn[u] < low[v]) 
                 bridge_set[i] = bridge_set[i&1?i+1:i-1] = 1;
         //} else if(instack[v]) {
