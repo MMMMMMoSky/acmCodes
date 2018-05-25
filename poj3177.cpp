@@ -58,35 +58,47 @@ void dfs(int u)
     }
 }
 
+void init()
+{
+    timenow = ebc_num = edge_num = 0;
+    memset(h, 0, sizeof h);
+    memset(degree, 0, sizeof degree);
+    memset(visited, 0, sizeof visited);
+    memset(bridge_set, 0, sizeof bridge_set);
+}
+
 int main()
 {
-    scanf("%d%d", &field_num, &road_num);
-    for(int i = 1; i <= road_num; i++)
+    while(~scanf("%d%d", &field_num, &road_num))
     {
-        int a, b; scanf("%d%d", &a, &b);
-        addedge(a, b);
-        addedge(b, a);
+        init();
+        for(int i = 1; i <= road_num; i++)
+        {
+            int a, b; scanf("%d%d", &a, &b);
+            addedge(a, b);
+            addedge(b, a);
+        }
+
+        //tarjan calc bridge
+        for(int i = 1; i <= field_num; i++)
+        if(!visited[i]) tarjan(i, 0);
+
+        //ebc缩点
+        memset(visited, 0, sizeof visited);
+        for(int i = 1; i <= field_num; i++)
+        if(!visited[i]) {ebc_num++; dfs(i);}
+
+        //calc degree
+        for(int i = 1; i <= edge_num; i+=2)
+        if(bridge_set[i]) degree[belong[to[i]]]++, 
+                          degree[belong[from[i]]]++;
+
+        //degree == 1
+        int ans = 0;
+        for(int i = 1; i <= ebc_num; i++) {
+            ans += degree[i] == 1;
+        }
+        printf("%d\n", (ans+1)>>1);
     }
-
-    //tarjan calc bridge
-    for(int i = 1; i <= field_num; i++)
-    if(!visited[i]) tarjan(i, 0);
-
-    //ebc缩点
-    memset(visited, 0, sizeof visited);
-    for(int i = 1; i <= field_num; i++)
-    if(!visited[i]) {ebc_num++; dfs(i);}
-
-    //calc degree
-    for(int i = 1; i <= edge_num; i+=2)
-    if(bridge_set[i]) degree[belong[to[i]]]++, 
-                      degree[belong[from[i]]]++;
-
-    //degree == 1
-    int ans = 0;
-    for(int i = 1; i <= ebc_num; i++) {
-        ans += degree[i] == 1;
-    }
-    printf("%d\n", (ans+1)>>1);
     return 0;
 }
