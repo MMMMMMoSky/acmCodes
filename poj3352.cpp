@@ -15,7 +15,6 @@ int timenow, dfn[5005], low[5005];
 int ebc_num, belong[5005], degree[5005];
 
 bool visited[5005];
-bool instack[5005];
 bool bridge_set[20005];
 
 void addedge(int u, int v)
@@ -29,7 +28,6 @@ void addedge(int u, int v)
 void tarjan(int u, int fa)
 {
     dfn[u] = low[u] = ++timenow;
-    //instack[u] = visited[u] = 1;
     visited[u] = 1;
     for(int i = h[u]; i; i=nx[i])
     {
@@ -39,12 +37,10 @@ void tarjan(int u, int fa)
             low[u] = min(low[u], low[v]);
             if(dfn[u] < low[v]) 
                 bridge_set[i] = bridge_set[i&1?i+1:i-1] = 1;
-        //} else if(instack[v]) {
         } else if(v != fa){
             low[u] = min(low[u], low[v]);
         }
     }
-    //instack[u] = 0;
 }
 
 void dfs(int u)

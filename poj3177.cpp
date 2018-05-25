@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <algorithm>
 #include <cstring>
+#include <map>
 using namespace std;
 
 int field_num, road_num;
@@ -15,8 +16,9 @@ int timenow, dfn[5005], low[5005];
 int ebc_num, belong[5005], degree[5005];
 
 bool visited[5005];
-bool instack[5005];
 bool bridge_set[20005];
+
+map <int, bool> same_edge;
 
 void addedge(int u, int v)
 {
@@ -24,12 +26,12 @@ void addedge(int u, int v)
     from[edge_num] = u;
     nx[edge_num] = h[u];
     h[u] = edge_num;
+    same_edge[u*10000+v] = 1;
 }
 
 void tarjan(int u, int fa)
 {
     dfn[u] = low[u] = ++timenow;
-    //instack[u] = visited[u] = 1;
     visited[u] = 1;
     for(int i = h[u]; i; i=nx[i])
     {
@@ -39,12 +41,10 @@ void tarjan(int u, int fa)
             low[u] = min(low[u], low[v]);
             if(dfn[u] < low[v]) 
                 bridge_set[i] = bridge_set[i&1?i+1:i-1] = 1;
-        //} else if(instack[v]) {
         } else if(v != fa){
             low[u] = min(low[u], low[v]);
         }
     }
-    //instack[u] = 0;
 }
 
 void dfs(int u)
@@ -61,6 +61,7 @@ void dfs(int u)
 void init()
 {
     timenow = ebc_num = edge_num = 0;
+    same_edge.clear();
     memset(h, 0, sizeof h);
     memset(degree, 0, sizeof degree);
     memset(visited, 0, sizeof visited);
@@ -75,8 +76,10 @@ int main()
         for(int i = 1; i <= road_num; i++)
         {
             int a, b; scanf("%d%d", &a, &b);
-            addedge(a, b);
-            addedge(b, a);
+            if(!same_edge[a*10000+b]) {
+                addedge(a, b);
+                addedge(b, a);
+            }
         }
 
         //tarjan calc bridge
