@@ -26,26 +26,29 @@ void addedge(int u, int v)
     h[u] = edge_num;
 }
 
-void tarjan(int u)
+void tarjan(int u, int fa)
 {
     dfn[u] = low[u] = ++timenow;
-    instack[u] = 1;
+    //instack[u] = visited[u] = 1;
+    visited[u] = 1;
     for(int i = h[u]; i; i=nx[i])
     {
         int v = to[i];
         if(!visited[v]) {
-            tarjan(v);
+            tarjan(v, u);
             if(dfn[u] < low[v]) 
                 bridge_set[i] = bridge_set[i&1?i+1:i-1] = 1;
-        } else if(instack[v]) {
+        //} else if(instack[v]) {
+        } else if(v != fa){
             low[u] = min(low[u], low[v]);
         }
     }
-    instack[u] = 0;
+    //instack[u] = 0;
 }
 
 void dfs(int u)
 {
+    visited[u] = 1;
     belong[u] = ebc_num;
     for(int i = h[u]; i; i=nx[i])
     {
@@ -57,7 +60,7 @@ void dfs(int u)
 int main()
 {
     scanf("%d%d", &field_num, &road_num);
-    for(int i = 0; i < road_num; i++)
+    for(int i = 1; i <= road_num; i++)
     {
         int a, b; scanf("%d%d", &a, &b);
         addedge(a, b);
@@ -66,7 +69,7 @@ int main()
 
     //tarjan calc bridge
     for(int i = 1; i <= field_num; i++)
-    if(!visited[i]) tarjan(i);
+    if(!visited[i]) tarjan(i, 0);
 
     //ebc缩点
     memset(visited, 0, sizeof visited);
@@ -75,7 +78,8 @@ int main()
 
     //calc degree
     for(int i = 1; i <= edge_num; i+=2)
-    if(bridge_set[i]) degree[to[i]]++, degree[from[i]]++;
+    if(bridge_set[i]) degree[belong[to[i]]]++, 
+                      degree[belong[from[i]]]++;
 
     //degree == 1
     int ans = 0;
